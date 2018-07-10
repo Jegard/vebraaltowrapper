@@ -32,7 +32,9 @@ First fill in your vebra api details into the plugin settings
 
 ## Using Vebra Alto Wrapper
 
--Insert text here-
+Then select which location you would like to import (this plugin can handle multiple locations) and select which section you want to import the properties to
+
+![GitHub Logo](/resources/img/step2.jpg)
 
 ## Vebra Alto Wrapper Roadmap
 
