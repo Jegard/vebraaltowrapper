@@ -22,7 +22,8 @@ To install the plugin, follow these instructions.
 
 ## Vebra Alto Wrapper Overview
 
--Insert text here-
+This plugin allows you to import properties from vebra alto as entries in craft cms 3.
+read api details here: http://webservices.vebra.com/export/xsd/v9/Client_Feed_API_v9_UserGuide.pdf
 
 ## Configuring Vebra Alto Wrapper
 
@@ -35,6 +36,12 @@ First fill in your vebra api details into the plugin settings
 Then select which location you would like to import (this plugin can handle multiple locations) and select which section you want to import the properties to
 
 ![GitHub Logo](/resources/img/step2.jpg)
+
+Then choose which fields you want the desired data to go. Please not 'images' and 'brochure' must be an assets field and propertyType must be a categories field containing a 'For Let' and a 'For Sale' category.
+
+Once all links have been saved you can then periodically update properties via a cron job
+
+![GitHub Logo](/resources/img/step3.jpg)
 
 ## Vebra Alto Wrapper Roadmap
 
