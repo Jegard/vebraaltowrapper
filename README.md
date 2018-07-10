@@ -26,7 +26,7 @@ To install the plugin, follow these instructions.
 
 ## Configuring Vebra Alto Wrapper
 
--Insert text here-
+![GitHub Logo](/resources/step1.jgp)
 
 ## Using Vebra Alto Wrapper
 
