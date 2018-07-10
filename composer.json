@@ -1,0 +1,43 @@
+{
+    "name": "jegardvebra/vebra-alto-wrapper",
+    "description": "Integration with the estate agency software vebraalto.com",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "vebra alto wrapper"
+    ],
+    "support": {
+        "docs": "https://github.com/https://github.com/Jegard/vebra-alto-wrapper/blob/master/README.md",
+        "issues": "https://github.com/https://github.com/Jegard/vebra-alto-wrapper/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luca Jegard",
+            "homepage": "https://github.com/Jegard"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "jegardvebra\\vebraaltowrapper\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Vebra Alto Wrapper",
+        "handle": "vebra-alto-wrapper",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/https://github.com/Jegard/vebra-alto-wrapper/master/CHANGELOG.md",
+        "components": {
+            "vebraAltoWrapperService": "jegardvebra\\vebraaltowrapper\\services\\VebraAltoWrapperService"
+        },
+        "class": "jegardvebra\\vebraaltowrapper\\VebraAltoWrapper"
+    }
+}
