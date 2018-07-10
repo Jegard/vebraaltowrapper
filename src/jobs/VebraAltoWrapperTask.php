@@ -77,8 +77,12 @@ class VebraAltoWrapperTask extends BaseJob
         $sectionId = $this->criteria['sectionId'];
         $branch = $this->criteria['branch'];
 
-        VebraAltoWrapper::getInstance()->vebraAlto->populateSection( $sectionId, $branch );
-    
+        $update = VebraAltoWrapper::getInstance()->vebraAlto->populateSection( $sectionId, $branch );
+        if( $update ){
+            Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Finished import'));
+        }else{
+            Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Error importing'));
+        }
     }
 
     // Protected Methods
