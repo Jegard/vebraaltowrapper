@@ -76,6 +76,7 @@ class VebraAltoWrapperTask extends BaseJob
         //VebraAltoWrapper::getInstance()->vebraAlto->
         $sectionId = $this->criteria['sectionId'];
         $branch = $this->criteria['branch'];
+        $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
 
         $update = VebraAltoWrapper::getInstance()->vebraAlto->populateSection( $sectionId, $branch );
         if( $update ){
