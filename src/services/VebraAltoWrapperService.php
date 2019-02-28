@@ -61,6 +61,7 @@ class VebraAltoWrapperService extends Component
 
     public function __construct($url = null, $dataFeedID = null, $vebraUsername = null, $vebraPassword = null)
     {
+        //Intention: get all of the settings from the settings section of Vebra within the Plugin section of Craft
         $this->url = "http://webservices.vebra.com/export/";
 
         $this->dataFeedID = $dataFeedID;
@@ -147,15 +148,25 @@ class VebraAltoWrapperService extends Component
     }
     public function getNewToken()
     {
+        //DataFeedID is set in the function __construct where it is retrieved from the 
+        //Settings section of this plugin within Craft CMS
         $url = "http://webservices.vebra.com/export/".$this->dataFeedID."/v10/branch";
+        //Start curl session
         $ch = curl_init($url);
+        //Define Basic HTTP Authentication method
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);//$this->vebraPassword
+        //Provide Username and Password Details
         curl_setopt($ch, CURLOPT_USERPWD, "$this->vebraUsername:$this->vebraPassword");
+        //Show headers in returned data but not body as we are only using this curl session to aquire and store the token
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_NOBODY, 1);
+        //Get the response upon executing the statement
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        //Set the execution of the statement to a variable ($response)
         $response = curl_exec($ch);
+        //Unsure why getting the info as this does NOT seem to be used..? Retained due to uncertainty to remove
         $info = curl_getinfo($ch);
+        //Close the curl session
         curl_close($ch);
         $headers = $this->get_headers_from_curl_response( $response )[0];
         
@@ -170,7 +181,7 @@ class VebraAltoWrapperService extends Component
 
     public function get_headers_from_curl_response($headerContent)
     {
-
+        //Used to get the token from the response of Vebra.
         $headers = array();
 
         // Split the string on every "double" new line.
@@ -206,8 +217,17 @@ class VebraAltoWrapperService extends Component
             // }else{
             //     $token = trim( file_get_contents( $file ) );
             // }
-            $token = $this->getNewToken();
-            if( !$token ){
+            
+            // $token = $this->getNewToken();
+            // if( !$token ){
+            //     $token = trim( file_get_contents( $file ) );
+            // }
+
+            if (time()-filemtime($file) > $tokenAge) {
+                file_put_contents( __DIR__.'/tokenAge.txt', 'Token older than '.$tokenAge. ' seconds old. The tokens age is '. (time()-filemtime($file)).' seconds old' );
+                $token = $this->getNewToken();
+            } else {
+                file_put_contents( __DIR__.'/tokenAge.txt', 'Token NOT older than '.$tokenAge. ' seconds old. The tokens age is '. (time()-filemtime($file)).' seconds old' );
                 $token = trim( file_get_contents( $file ) );
             }
         }
