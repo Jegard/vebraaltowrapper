@@ -207,6 +207,7 @@ class VebraAltoWrapperService extends Component
     public function getToken()
     {
         $file = __DIR__ . "/token.txt";
+        $tokenAge = 3600;
         if( !file_exists($file) ){
             $token = $this->getNewToken();
         }else{
