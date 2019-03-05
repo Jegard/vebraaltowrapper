@@ -298,8 +298,10 @@ class VebraAltoWrapperService extends Component
             }
         }
         
+        $log = [];
+
         $propertyList = $this->connect( $branch->url . '/property' )['response']['property'];
-        //file_put_contents(__DIR__.'/props.json', json_encode($propertyList));
+        file_put_contents(__DIR__.'/props.json', json_encode($propertyList));
 
         $allProps = [];
         foreach( $propertyList as $property ){
@@ -312,6 +314,8 @@ class VebraAltoWrapperService extends Component
             $title = $property['address']['display'];
             $ref = $property['reference']['software'];
 
+            array_push($log, date('h:i a') . ' - Adding ' . $title);
+            file_put_contents(__DIR__. '/vebra.json', json_encode($log));
 
             $fields = array(
                 'title' => $title,
@@ -463,7 +467,7 @@ class VebraAltoWrapperService extends Component
 
             $propArray = json_decode(json_encode( $property ), TRUE);
             
-            \Kint::dump( $propArray );
+            // \Kint::dump( $propArray );
             //file_put_contents( __DIR__ . '/prop.json' , json_encode( $property ) );
 
             $title = (string)$property['address']->display;
