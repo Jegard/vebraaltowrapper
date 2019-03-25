@@ -23,6 +23,7 @@ use craft\helpers\StringHelper;
 use jegardvebra\vebraaltowrapper\models\LinkModel;
 use jegardvebra\vebraaltowrapper\records\VebraAltoWrapperRecord;
 use craft\elements\db\CategoryQuery;
+use craft\web\twig\variables\Sections;
 
 /**
  * VebraAltoWrapperService Service
@@ -65,17 +66,16 @@ class VebraAltoWrapperService extends Component
         $this->url = "http://webservices.vebra.com/export/";
 
         $this->dataFeedID = $dataFeedID;
-        if( is_null( $dataFeedID ) ){
+        if (is_null($dataFeedID)) {
             $this->dataFeedID = VebraAltoWrapper::$plugin->getSettings()->dataFeedID;
         }
         
-        if( is_null( $vebraUsername ) ){
+        if (is_null($vebraUsername)) {
             $this->vebraUsername = VebraAltoWrapper::$plugin->getSettings()->vebraUsername;
         }
-        if( is_null( $vebraPassword ) ){
+        if (is_null($vebraPassword)) {
             $this->vebraPassword = VebraAltoWrapper::$plugin->getSettings()->vebraPassword;
         }
-
     }
 
     public function exampleService()
@@ -87,19 +87,19 @@ class VebraAltoWrapperService extends Component
 
         return $result;
     }
-    public function getAllLinkModels ()
+    public function getAllLinkModels()
     {
         //get record from DB
         return VebraAltoWrapperRecord::find()
             ->all();
     }
-    public function getLinkModel ($sectionId)
+    public function getLinkModel($sectionId)
     {
         return VebraAltoWrapperRecord::find()
             ->where(['sectionId' => $sectionId])
             ->one();
     }
-    public function deleteLinkModel( $sectionId )
+    public function deleteLinkModel($sectionId)
     {
         //get record from DB
         $linkModelRecord = VebraAltoWrapperRecord::find()
@@ -107,7 +107,7 @@ class VebraAltoWrapperService extends Component
             ->one();
         return $linkModelRecord->delete();
     }
-    public function updateLinkModel( $sectionId, $branch )
+    public function updateLinkModel($sectionId, $branch)
     {
         //get record from DB
         $linkModelRecord = VebraAltoWrapperRecord::find()
@@ -116,11 +116,9 @@ class VebraAltoWrapperService extends Component
         
         //\Kint::dump( $linkModelRecord );
         
-        if( $linkModelRecord ){
+        if ($linkModelRecord) {
             $linkModelRecord->setAttribute('branch', $branch);
-        }
-
-        else {
+        } else {
             $linkModelRecord = new VebraAltoWrapperRecord;
             $linkModelRecord->setAttribute('sectionId', $sectionId);
             $linkModelRecord->setAttribute('branch', $branch);
@@ -128,27 +126,27 @@ class VebraAltoWrapperService extends Component
         
         return $linkModelRecord->save();
     }
-    public function getFieldMapping( $sectionId )
+    public function getFieldMapping($sectionId)
     {
         return $linkModelRecord = VebraAltoWrapperRecord::find()
             ->where(['sectionId' => $sectionId])
             ->one();
     }
-    public function updateFieldMapping ( $sectionId, $fieldMapping )
+    public function updateFieldMapping($sectionId, $fieldMapping)
     {
         $linkModelRecord = VebraAltoWrapperRecord::find()
             ->where(['sectionId' => $sectionId])
             ->one();
-        if( $linkModelRecord ){
+        if ($linkModelRecord) {
             $linkModelRecord->setAttribute('fieldMapping', $fieldMapping);
             return $linkModelRecord->save();
-        }else{
+        } else {
             return false;
         }
     }
     public function getNewToken()
     {
-        //DataFeedID is set in the function __construct where it is retrieved from the 
+        //DataFeedID is set in the function __construct where it is retrieved from the
         //Settings section of this plugin within Craft CMS
         $url = "http://webservices.vebra.com/export/".$this->dataFeedID."/v10/branch";
         //Start curl session
@@ -168,15 +166,14 @@ class VebraAltoWrapperService extends Component
         $info = curl_getinfo($ch);
         //Close the curl session
         curl_close($ch);
-        $headers = $this->get_headers_from_curl_response( $response )[0];
+        $headers = $this->get_headers_from_curl_response($response)[0];
         
-        if( array_key_exists('Token', $headers) ){
-            file_put_contents( __DIR__.'/token.txt', base64_encode( $headers['Token'] ) );
+        if (array_key_exists('Token', $headers)) {
+            file_put_contents(__DIR__.'/token.txt', base64_encode($headers['Token']));
             return $headers['Token'];
-        }else{
+        } else {
             return false;
         }
-
     }
 
     public function get_headers_from_curl_response($headerContent)
@@ -187,17 +184,14 @@ class VebraAltoWrapperService extends Component
         // Split the string on every "double" new line.
         $arrRequests = explode("\r\n\r\n", $headerContent);
 
-        // Loop of response headers. The "count() -1" is to 
+        // Loop of response headers. The "count() -1" is to
         //avoid an empty row for the extra line break before the body of the response.
         for ($index = 0; $index < count($arrRequests) -1; $index++) {
-
-            foreach (explode("\r\n", $arrRequests[$index]) as $i => $line)
-            {
-                if ($i === 0)
+            foreach (explode("\r\n", $arrRequests[$index]) as $i => $line) {
+                if ($i === 0) {
                     $headers[$index]['http_code'] = $line;
-                else
-                {
-                    list ($key, $value) = explode(': ', $line);
+                } else {
+                    list($key, $value) = explode(': ', $line);
                     $headers[$index][$key] = $value;
                 }
             }
@@ -208,9 +202,9 @@ class VebraAltoWrapperService extends Component
     {
         $file = __DIR__ . "/token.txt";
         $tokenAge = 3600;
-        if( !file_exists($file) ){
+        if (!file_exists($file)) {
             $token = $this->getNewToken();
-        }else{
+        } else {
             // if the tokens file is more then an hour old
             // if( date('U' , filectime($file)) <= time() - 3600 ) {
             // //if( filemtime($file) < time() -  (60 * 50) ) {
@@ -225,11 +219,11 @@ class VebraAltoWrapperService extends Component
             // }
 
             if (time()-filemtime($file) > $tokenAge) {
-                file_put_contents( __DIR__.'/tokenAge.txt', 'Token older than '.$tokenAge. ' seconds old. The tokens age is '. (time()-filemtime($file)).' seconds old' );
+                file_put_contents(__DIR__.'/tokenAge.txt', 'Token older than '.$tokenAge. ' seconds old. The tokens age is '. (time()-filemtime($file)).' seconds old');
                 $token = $this->getNewToken();
             } else {
-                file_put_contents( __DIR__.'/tokenAge.txt', 'Token NOT older than '.$tokenAge. ' seconds old. The tokens age is '. (time()-filemtime($file)).' seconds old' );
-                $token = trim( file_get_contents( $file ) );
+                file_put_contents(__DIR__.'/tokenAge.txt', 'Token NOT older than '.$tokenAge. ' seconds old. The tokens age is '. (time()-filemtime($file)).' seconds old');
+                $token = trim(file_get_contents($file));
             }
         }
         return $token;
@@ -238,13 +232,13 @@ class VebraAltoWrapperService extends Component
     {
         $token = $this->getToken();
         //$token = $this->getToken();
-        if(!$token) {
+        if (!$token) {
             return false;
         }
-        if( strlen($url) == 0 ){
+        if (strlen($url) == 0) {
             $url = "http://webservices.vebra.com/export/" . $this->dataFeedID . "/v10/branch";
         }
-        $ch = curl_init( $url );
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Basic ' . $token ));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -252,7 +246,7 @@ class VebraAltoWrapperService extends Component
         $info = curl_getinfo($ch);
         curl_close($ch);
 
-        file_put_contents( __DIR__. '/info.json' , json_encode( $info ) );
+        file_put_contents(__DIR__. '/info.json', json_encode($info));
 
         return array(
             'response' => (array)simplexml_load_string($response),
@@ -270,8 +264,8 @@ class VebraAltoWrapperService extends Component
 
         //$title = 'St. Peter';
 
-        $title = str_replace(array('.', ','), '' , $title);
-        $title = trim( $title );
+        $title = str_replace(array('.', ','), '', $title);
+        $title = trim($title);
         $query->title = $title;
         return $query->all();
 
@@ -282,193 +276,31 @@ class VebraAltoWrapperService extends Component
     {
         $propertyList = [];
         $branches = $this->getBranch();
-        if( !$branches ){
+        if (!$branches) {
             return false;
         }
-        foreach($branches as $branch){
-            $props = $this->connect( $branch->url . '/property' )['response'];
-            $propertyList = array_merge( $propertyList, $props );
+        foreach ($branches as $branch) {
+            $props = $this->connect($branch->url . '/property')['response'];
+            $propertyList = array_merge($propertyList, $props);
         }
         return $propertyList['property'];
     }
 
     public function getArrayValueByCsv($string, $array)
     {
-        $keys = explode( ',' , $string );
-        foreach($keys as $key){
-            if( !isset($value) ){
+        $keys = explode(',', $string);
+        foreach ($keys as $key) {
+            if (!isset($value)) {
                 $value = $array[$key];
-            }else{
-                
-                $value = $value[ is_numeric ( $key ) ? (int)$key : ($key) ];
+            } else {
+                if (isset($value[ is_numeric($key) ? (int)$key : ($key) ])) {
+                    $value = $value[ is_numeric($key) ? (int)$key : ($key) ];
+                }
             }
         }
         
         //return !is_array( $value ) ? $value : '';
         return $value;
-    }
-    public function populateSection($sectionId, $branchName)
-    {
-        $linkModel = $this->getLinkModel($sectionId);
-        $fieldMapping = json_decode( $linkModel->fieldMapping );
-        $branches = $this->getBranch();
-        
-        foreach( $branches as $_branch ){
-            if( $_branch->name == $branchName ){
-                $branch = $_branch;
-            }
-        }
-        
-        $log = [];
-
-        $propertyList = $this->connect( $branch->url . '/property' )['response']['property'];
-        file_put_contents(__DIR__.'/props.json', json_encode($propertyList));
-
-        $allProps = [];
-        foreach( $propertyList as $property ){
-            $property = $this->connect( $property->url )['response'];
-            $property = json_decode(json_encode( $property ), TRUE);
-
-            $allProps = array_merge( $allProps, [ $property ] );
-            // die();
-
-            $title = $property['address']['display'];
-            $ref = $property['reference']['software'];
-
-            array_push($log, date('h:i a') . ' - Adding ' . $title);
-            file_put_contents(__DIR__. '/vebra.json', json_encode($log));
-
-            $fields = array(
-                'title' => $title,
-                'reference' => $ref,
-            );
-
-            //var_dump( $property['files']['file'] );
-
-            $value = $this->getArrayValueByCsv( 'bullets,bullet', $property );
-            //d( $value );
-
-            foreach($fieldMapping as $craftField => $vebraField){
-                //d( $vebraField );
-
-                switch($vebraField){
-                    case 'parish':
-                        $ids = [];
-                        $cats = $this->searchCategoriesByTitle( (string)$property['address']['town'] );
-                        foreach($cats as $cat){
-                            $ids [] = $cat->id;
-                        }
-                        //$fields[$craftField] = $ids;
-                        $fields[$craftField] = $ids;
-                        break;
-                    case 'LetOrSale(category)':
-                        if( (int)$property['web_status'] > 99 ){
-                            //letting
-                            $cat = Category::find()
-                                ->title('For Let')
-                                ->all();
-                        }else{
-                            //sales
-                            $cat = Category::find()
-                                ->title('For Sale')
-                                ->all();
-                        }
-                        if( count($cat) > 0 ){
-                            $fields[$craftField] = [ $cat[0]->id ];
-                        }
-                        break;
-                    case 'pdf':
-                            $pdfs = $this->getPdfs( $property['files'] );
-                            $fields[$craftField] = $pdfs;
-                        break;
-                    case 'measurements':
-                            $measure = [];
-
-                            // d( $property['paragraphs'] );
-                            if( $this->findKey( $property['paragraphs'], 'paragraph' ) ){
-                                $paragraphs = $property['paragraphs']['paragraph'];
-
-                                foreach($paragraphs as $paragraph){
-
-                                    if( gettype( $paragraph ) == 'array' ){
-                                        
-
-                                        if( $this->findKey( $paragraph, 'metric' ) && $this->findKey( $paragraph, 'name' ) && $this->findKey( $paragraph, 'text' ) ){
-                                            $name = $paragraph['name'];
-                                            $dimensions = $paragraph['dimensions']['metric'];
-                                            $text = $paragraph['text'];
-
-                                            if( gettype( $name ) != 'array' && gettype( $dimensions ) != 'array' && gettype( $text ) != 'array' ){
-                                                $measure [] = $paragraph['name'] . ' | ' . $paragraph['dimensions']['metric'] . ' | ' . $paragraph['text'];
-                                            }
-                                            
-                                        }
-                                    }
-                                }
-                                $fields[$craftField] = join('@', $measure);
-                            }
-                            
-                        break;
-                    case 'images':
-                            $images = $this->getImages( $property['files'] , $title );
-                            $fields[$craftField] = $images;
-                        break;
-                    default:
-                        if( strlen( $vebraField ) > 0 ){
-                            $value = $this->getArrayValueByCsv( $vebraField, $property );
-                            if( strpos($vebraField, ',') !== false ){
-                                // \Kint::dump(  $this->getArrayValueByCsv( $vebraField, $property ) );
-                                $value = $this->getArrayValueByCsv( $vebraField, $property );
-
-                                
-                            }else{
-                                $value = $property[$vebraField];
-                            }
-                            
-                            $fields[$craftField] = is_array( $value ) ? join('|', $value) : $value;
-                        }
-                }
-            }
-
-            $entry = Entry::find()
-                ->sectionId($sectionId)
-                //->title( $title )
-                ->reference( $ref )
-                ->status(null)
-                ->all();
-            
-            if( empty( $entry ) )
-            {
-                $this->saveNewEntry( 1 , $fields );
-            }else{
-                $this->updateEntry( $entry[0] , $fields );
-            }
-        }
-        file_put_contents(__DIR__.'/props.json', json_encode($allProps));
-        // d($allProps[0]['paragraphs']['paragraph']  );
-        $allEntries = Entry::find()
-            ->sectionId($sectionId)
-            //->title( $title )
-            ->limit(null)
-            ->status(null)
-            ->all();
-        foreach($allEntries as $entry){
-            $isOnVebra = false;
-            foreach( $allProps as $property ){
-                if( (string)$entry->reference == (string)$property['reference']['software'] ){
-                    $isOnVebra = true;
-                }
-            }
-            if( !$isOnVebra ){
-                $entry->enabled = false;
-                Craft::$app->elements->saveElement($entry);
-            }else{
-                $entry->enabled = true;
-                Craft::$app->elements->saveElement($entry);
-            }
-        }
-        
-        return true;
     }
     public function findKey($array, $keySearch)
     {
@@ -481,75 +313,13 @@ class VebraAltoWrapperService extends Component
         }
         return false;
     }
-    public function populateProperties($propertyList)
+    
+    public function getPdfs($pdfs)
     {
-        foreach($propertyList as $property){
-            $property = $this->connect( $property->url )['response'];
-
-            $propArray = json_decode(json_encode( $property ), TRUE);
-            
-            // \Kint::dump( $propArray );
-            //file_put_contents( __DIR__ . '/prop.json' , json_encode( $property ) );
-
-            $title = (string)$property['address']->display;
-            $ref = (string)$property['reference']->software;
-            $description = (string)$property['description'];
-
-            $images = $this->getImages( $property['files'] );
-
-            if( (int)$property['web_status'] > 99 ){
-                //letting
-                $cat = Category::find()
-                    ->title('For Let')
-                    ->all();
-            }else{
-                //sales
-                $cat = Category::find()
-                    ->title('For Sale')
-                    ->all();
-            }
-
-
-            $fields = array(
-                'reference' => $ref,
-                'title' => $title,
-                'slug' => $title,
-                'price' => floatval( $property['price'] ),
-                'description' => $description,
-                'propertyImage' => $images,
-                'bedrooms' => $property['bedrooms'],
-                'receptions' => $property['receptions'],
-                'bathrooms' => $property['bathrooms']
-            );
-
-            if( count($cat) > 0 ){
-                $fields['propertyType'] = [ $cat[0]->id ];
-            }
-
-            $entry = Entry::find()
-                ->section('property')
-                //->title( $title )
-                ->status(null)
-                ->reference( $ref )
-                ->all();
-
-            //\Kint::dump( $property );
-            if( empty( $entry ) )
-            {
-                $this->saveNewEntry( $sectionId , $fields );
-            }else{
-                $this->updateEntry( $entry[0] , $fields );
-            }
-        }
-    }
-    public function getPdfs( $pdfs )
-    {
-
-
         $ids = [];
         //\Kint::dump( $images['file'][0]['name'] );
 
-        foreach( $pdfs['file'] as $pdf ){
+        foreach ($pdfs['file'] as $pdf) {
             
             //\Kint::dump( $pdf );
 
@@ -558,25 +328,25 @@ class VebraAltoWrapperService extends Component
             $name = $pdf['name'];
 
             
-            if( gettype($url) == 'string' ){
+            if (gettype($url) == 'string') {
 
                 //$url = strtolower( $url );
 
 
-                if( strpos( $url , 'pdf') !== false || strpos( $url , 'PDF') !== false ){
+                if (strpos($url, 'pdf') !== false || strpos($url, 'PDF') !== false) {
 
                     //$name = StringHelper::toKebabCase( $name );
-                    $name = explode( '.' , $name )[0];
-                    $name = StringHelper::toKebabCase( $name ) . '.pdf';
+                    $name = explode('.', $name)[0];
+                    $name = StringHelper::toKebabCase($name) . '.pdf';
 
                     $assets = Asset::Find()
-                        ->filename( $name )
+                        ->filename($name)
                         ->all();
                     // d( $assets );
                     //\kint::dump( $url );
-                    if( count( $assets ) == 0 ){
-                        $ids [] = (string)$this->createAssetFromUrl( $name, $url );
-                    }else{
+                    if (count($assets) == 0) {
+                        $ids [] = (string)$this->createAssetFromUrl($name, $url);
+                    } else {
                         $ids [] = (string)$assets[0]->id;
                     }
                 }
@@ -585,44 +355,39 @@ class VebraAltoWrapperService extends Component
         //\Kint::dump( $ids );
         return $ids;
     }
-    public function getImages( $images, $title = '' )
+    public function getImages($images, $title = '')
     {
-
-
         $ids = [];
         //\Kint::dump( $images['file'][0]['name'] );
 
-        foreach( $images['file'] as $image ){
-            
-            
+        foreach ($images['file'] as $image) {
             $url = $image['url'];
 
             $name = $image['name'];
 
 
-            if( gettype($name) == 'array' ){
+            if (gettype($name) == 'array') {
                 $name = md5($url);
-            }else{
+            } else {
                 $name = md5($url) . $name;
             }
             
-            if( gettype($name) == 'string' ){
-
-                $name = strtolower( $name );
+            if (gettype($name) == 'string') {
+                $name = strtolower($name);
                 
-                if( strpos( strtolower( $url ) , 'jpg') !== false || strpos( strtolower( $url ) , 'png') ){
+                if (strpos(strtolower($url), 'jpg') !== false || strpos(strtolower($url), 'png')) {
 
                     //$name = StringHelper::toKebabCase( $name );
-                    $name = explode( '.' , $name )[0];
-                    $name = StringHelper::toKebabCase( $name ) . '.jpg';
+                    $name = explode('.', $name)[0];
+                    $name = StringHelper::toKebabCase($name) . '.jpg';
 
                     $assets = Asset::Find()
-                        ->filename( $name )
+                        ->filename($name)
                         ->all();
                     // d( $assets );
-                    if( count( $assets ) == 0 ){
-                        $ids [] = (string)$this->createAssetFromUrl( $name, $url );
-                    }else{
+                    if (count($assets) == 0) {
+                        $ids [] = (string)$this->createAssetFromUrl($name, $url);
+                    } else {
                         $ids [] = (string)$assets[0]->id;
                     }
                 }
@@ -631,9 +396,8 @@ class VebraAltoWrapperService extends Component
         //\Kint::dump( $ids );
         return $ids;
     }
-    public function createAssetFromUrl($sFilename,$url)
+    public function createAssetFromUrl($sFilename, $url)
     {
-
         $img = file_get_contents($url);
         
 
@@ -658,27 +422,28 @@ class VebraAltoWrapperService extends Component
         $asset->newFolderId = $folder->id;
         $asset->volumeId = $folder->volumeId;
 
-        if(!$result = Craft::$app->getElements()->saveElement($asset)){
+        if (!$result = Craft::$app->getElements()->saveElement($asset)) {
             Craft::error('[API CALLER] Could not store image ' . Json::encode($asset->getErrors()));
             //\Kint::dump($asset->getErrors());
         }
 
         return $asset->id;
     }
-    public function getFolder($id){
-        if($this->_folder === null){
+    public function getFolder($id)
+    {
+        if ($this->_folder === null) {
             $this->_folder = Craft::$app->getAssets()->findFolder(['id' => $id]);
         }
         return $this->_folder;
     }
-    public function updateEntry( $entry, $fields )
+    public function updateEntry($entry, $fields)
     {
-        if(isset($fields['title'])) {
+        if (isset($fields['title'])) {
             $entry->title = $fields['title'];
             unset($fields['title']);
         }
     
-        if(isset($fields['slug'])) {
+        if (isset($fields['slug'])) {
             $entry->slug = $fields['slug'];
             unset($fields['slug']);
         }
@@ -686,40 +451,53 @@ class VebraAltoWrapperService extends Component
         //$entry->expiryDate = new \DateTime();
         //$entry->expiryDate = null;
 
-        if(Craft::$app->elements->saveElement($entry)) {
+        if (Craft::$app->elements->saveElement($entry)) {
             return $entry;
         } else {
             throw new \Exception("Couldn't save new entry " . print_r($entry->getErrors(), true));
         }
     }
-    public function saveNewEntry( $sectionId, $fields)
+    public function saveNewEntry($sectionId, $fields)
     {
         //$entryType = EntryType::find()->where(['handle' => $handle])->one();
-    
+
         $entry = new Entry();
-        $entry->sectionId = $sectionId;
+        $entry->sectionId = (int)$sectionId;
 
         //$entry->typeId = $entryType->getAttribute('id');
-        $entry->typeId = 1;
+        // $entry->typeId = 1;
+
+        $sections = new Sections();
+        $section = $sections->getSectionById($sectionId);
+        $entryTypes = $section->getEntryTypes();
+        $entry->typeId = (int)$entryTypes[0]->id;
         //$entry->fieldLayoutId = $entryType->getAttribute('fieldLayoutId');
         $entry->authorId = 1;
     
-        if(isset($fields['title'])) {
+        if (isset($fields['title'])) {
             $entry->title = $fields['title'];
             unset($fields['title']);
         }
     
-        if(isset($fields['slug'])) {
+        if (isset($fields['slug'])) {
             $entry->slug = $fields['slug'];
             unset($fields['slug']);
         }
+
     
         $entry->setFieldValues($fields);
     
-        if(Craft::$app->elements->saveElement($entry)) {
+        if (Craft::$app->elements->saveElement($entry)) {
             return $entry;
         } else {
+            $this->vebraLog('Save entry error: ' . print_r($fields, true));
             throw new \Exception("Couldn't save new entry " . print_r($entry->getErrors(), true));
         }
+    }
+    public function vebraLog($message)
+    {
+        $file = Craft::getAlias('@storage/logs/vebra.log');
+        $log = date('Y-m-d H:i:s').' '.$message."\n";
+        FileHelper::writeToFile($file, $log, ['append' => true]);
     }
 }

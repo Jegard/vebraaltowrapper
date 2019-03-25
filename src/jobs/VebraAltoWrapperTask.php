@@ -15,6 +15,7 @@ use jegardvebra\vebraaltowrapper\VebraAltoWrapper;
 use Craft;
 use craft\elements\Entry;
 use craft\queue\BaseJob;
+use craft\helpers\FileHelper;
 
 /**
  * VebraAltoWrapperTask job
@@ -70,21 +71,10 @@ class VebraAltoWrapperTask extends BaseJob
      * More info: https://github.com/yiisoft/yii2-queue
      */
     public function execute($queue)
-    {   
-        //$this->setProgress($queue, $currentElement++ / $totalElements);
-        // Do work here
-        //file_put_contents(__DIR__ . '/test.txt', json_encode( $this->criteria['sectionId'] ) );
-        //VebraAltoWrapper::getInstance()->vebraAlto->
+    {
         $sectionId = $this->criteria['sectionId'];
         $branch = $this->criteria['branch'];
         $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
-
-        // $update = VebraAltoWrapper::getInstance()->vebraAlto->populateSection( $sectionId, $branch );
-        // if( $update ){
-        //     Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Finished import'));
-        // }else{
-        //     Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Error importing'));
-        // }
 
         $branchName = $branch;
         $linkModel = VebraAltoWrapper::getInstance()->vebraAlto->getLinkModel($sectionId);
@@ -115,26 +105,21 @@ class VebraAltoWrapperTask extends BaseJob
             $property = json_decode(json_encode( $property ), TRUE);
 
             $allProps = array_merge( $allProps, [ $property ] );
-            // die();
 
             $title = $property['address']['display'];
             $ref = $property['reference']['software'];
+            $this->vebraLog('Adding property ' . $title);
 
             $fields = array(
                 'title' => $title,
                 'reference' => $ref,
             );
 
-            //var_dump( $property['files']['file'] );
-
-            $value = VebraAltoWrapper::getInstance()->vebraAlto->getArrayValueByCsv( 'bullets,bullet', $property );
-            //d( $value );
-
             foreach($fieldMapping as $craftField => $vebraField){
-                //d( $vebraField );
 
                 switch($vebraField){
                     case 'parish':
+                        $this->vebraLog('Creating parish categories');
                         $ids = [];
                         $cats = VebraAltoWrapper::getInstance()->vebraAlto->searchCategoriesByTitle( (string)$property['address']['town'] );
                         foreach($cats as $cat){
@@ -221,8 +206,10 @@ class VebraAltoWrapperTask extends BaseJob
             
             if( empty( $entry ) )
             {
-                VebraAltoWrapper::getInstance()->vebraAlto->saveNewEntry( 1 , $fields );
+                $this->vebraLog('Attempting to save entry ' . json_encode($fields));
+                VebraAltoWrapper::getInstance()->vebraAlto->saveNewEntry( $sectionId , $fields );
             }else{
+                $this->vebraLog('Attempting to update entry ' . json_encode($fields));
                 VebraAltoWrapper::getInstance()->vebraAlto->updateEntry( $entry[0] , $fields );
             }
         }
@@ -250,6 +237,13 @@ class VebraAltoWrapperTask extends BaseJob
             }
         }
 
+    }
+
+    public function vebraLog($message)
+    {
+        $file = Craft::getAlias('@storage/logs/vebra.log');
+        $log = date('Y-m-d H:i:s').' '.$message."\n";
+        FileHelper::writeToFile($file, $log, ['append' => true]);
     }
 
     // Protected Methods

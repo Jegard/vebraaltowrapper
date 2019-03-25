@@ -106,11 +106,11 @@ class VebraAltoWrapper extends Plugin
 
 
 
-        //\Kint::dump($list);
-        // $this->vebraAlto->saveNewEntry(1, array(
-        //     'title' => 'ffwe2f',
-        //     'slug' => 'deff',
-        //     'price' => 42
+        // //\Kint::dump($list);
+        // $this->vebraAlto->saveNewEntry(2, array(
+        //     'title' => 'La Rue Horman',
+        //     // 'slug' => 'deff',
+        //     // 'price' => 42
         // ));
 
         // Register our site routes
