@@ -91,9 +91,17 @@ class VebraAltoWrapperTask extends BaseJob
         $fieldMapping = json_decode( $linkModel->fieldMapping );
         $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
 
-        foreach( $branches as $_branch ){
-            if( $_branch->name == $branchName ){
-                $branch = $_branch;
+        if( strpos($branchName, '-noname') !== false ){
+            foreach ($branches as $_branch) {
+                if ((int)$_branch->branchid == explode('-',$branchName)[0]) {
+                    $branch = $_branch;
+                }
+            }
+        }else{
+            foreach ($branches as $_branch) {
+                if ($_branch->name == $branchName) {
+                    $branch = $_branch;
+                }
             }
         }
 

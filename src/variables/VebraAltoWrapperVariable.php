@@ -104,7 +104,11 @@ class VebraAltoWrapperVariable
         $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
         $options = [];
         foreach( $branches as $branch ){
-            $options [ (string)$branch->name ] = $branch->name;
+            if( (string)$branch->name == ''){
+                $options [ (int)$branch->branchid . '-noname' ] = $branch->branchid;
+            }else{
+                $options [ (string)$branch->name ] = $branch->name;
+            }
         }
         return $options;
     }
