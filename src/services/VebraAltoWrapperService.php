@@ -314,7 +314,7 @@ class VebraAltoWrapperService extends Component
         return false;
     }
     
-    public function getPdfs($pdfs)
+    public function getPdfs($pdfs, $reference)
     {
         $ids = [];
         //\Kint::dump( $images['file'][0]['name'] );
@@ -337,7 +337,8 @@ class VebraAltoWrapperService extends Component
 
                     //$name = StringHelper::toKebabCase( $name );
                     $name = explode('.', $name)[0];
-                    $name = StringHelper::toKebabCase($name) . '.pdf';
+                    
+                    $pdfs = $this->getPdfs( $property['files'], $property['reference']['software'] );
 
                     $assets = Asset::Find()
                         ->filename($name)
