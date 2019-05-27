@@ -16,6 +16,7 @@ use Craft;
 use craft\elements\Entry;
 use craft\queue\BaseJob;
 use craft\helpers\FileHelper;
+use craft\elements\Category;
 
 /**
  * VebraAltoWrapperTask job
