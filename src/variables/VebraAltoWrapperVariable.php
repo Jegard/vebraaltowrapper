@@ -15,22 +15,22 @@ use jegardvebra\vebraaltowrapper\models\LinkModel;
  */
 class VebraAltoWrapperVariable
 {
-
     public function getAllLinkModels()
     {
         return VebraAltoWrapper::getInstance()->vebraAlto->getAllLinkModels();
     }
     public function getLinkByField($sectionId, $fieldHandle)
     {
-        $linkModel = VebraAltoWrapper::getInstance()->vebraAlto->getFieldMapping( $sectionId );
-        $fieldMapping = (array)json_decode( $linkModel->fieldMapping );
-        if( array_key_exists( $fieldHandle , $fieldMapping ) ){
+        $linkModel = VebraAltoWrapper::getInstance()->vebraAlto->getFieldMapping($sectionId);
+        $fieldMapping = (array)json_decode($linkModel->fieldMapping);
+        if (array_key_exists($fieldHandle, $fieldMapping)) {
             return $fieldMapping[$fieldHandle];
-        }else{
+        } else {
             return '';
         }
     }
-    public function getSchema(){
+    public function getSchema()
+    {
         return array(
             '' => 'Dont import',
             //'reference,agents' => 'reference,agents',
@@ -43,6 +43,7 @@ class VebraAltoWrapperVariable
             'parish' => 'parish',
 
             'measurements' => 'measurements',
+            'paragraphs' => 'paragraphs',
 
             'reference,software' => 'reference,software',
             'address,name' => 'address,name',
@@ -99,14 +100,15 @@ class VebraAltoWrapperVariable
 
         );
     }
-    public function getAllBranches(){
+    public function getAllBranches()
+    {
         $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
         $options = [];
-        foreach( $branches as $branch ){
-            if( (string)$branch->name == ''){
+        foreach ($branches as $branch) {
+            if ((string)$branch->name == '') {
                 $options [ (int)$branch->branchid . '-noname' ] = $branch->branchid;
-            }else{
+            } else {
                 $options [ (string)$branch->name ] = $branch->name;
             }
         }

@@ -177,6 +177,33 @@ class VebraAltoWrapperTask extends BaseJob
                             }
                             
                         break;
+                        case 'paragraphs':
+                            $measure = [];
+
+                            if( VebraAltoWrapper::getInstance()->vebraAlto->findKey( $property['paragraphs'], 'paragraph' ) ){
+                                $paragraphs = $property['paragraphs']['paragraph'];
+
+                                foreach($paragraphs as $paragraph){
+
+                                    if( gettype( $paragraph ) == 'array' ){
+                                        
+
+                                        if( VebraAltoWrapper::getInstance()->vebraAlto->findKey( $paragraph, 'metric' ) && VebraAltoWrapper::getInstance()->vebraAlto->findKey( $paragraph, 'name' ) && VebraAltoWrapper::getInstance()->vebraAlto->findKey( $paragraph, 'text' ) ){
+                                            $name = $paragraph['name'];
+                                            $dimensions = $paragraph['dimensions']['metric'];
+                                            $text = $paragraph['text'];
+
+                                            if( gettype( $name ) != 'array' && gettype( $dimensions ) == 'array' && gettype( $text ) != 'array' ){
+                                                $measure [] = $paragraph['name'] . ' | ' . $paragraph['text'];
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                $fields[$craftField] = join('@', $measure);
+                            }
+                            
+                        break;
                     case 'images':
                             $images = VebraAltoWrapper::getInstance()->vebraAlto->getImages( $property['files'] , $title );
                             $fields[$craftField] = $images;
