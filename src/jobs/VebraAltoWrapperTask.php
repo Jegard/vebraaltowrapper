@@ -196,10 +196,9 @@ class VebraAltoWrapperTask extends BaseJob
                                                 $name = '';
                                             }
 
-                                            if( gettype( $name ) != 'array' && gettype( $text ) != 'array' ){
-                                                $measure [] = $paragraph['name'] . ' | ' . $paragraph['text'];
+                                            if(gettype( $text ) != 'array'){
+                                                $measure [] = $name . ' | ' . $paragraph['text'];
                                             }
-                                            
                                         }
                                     }
                                 }
