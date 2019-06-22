@@ -193,7 +193,7 @@ class VebraAltoWrapperTask extends BaseJob
                                             $text = $paragraph['text'];
 
                                             if(gettype( $name ) == 'array'){
-                                                $name = '';
+                                                $name = 'quote';
                                             }
 
                                             if(gettype( $text ) != 'array'){
