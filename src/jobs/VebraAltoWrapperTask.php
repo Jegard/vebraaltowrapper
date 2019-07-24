@@ -119,6 +119,19 @@ class VebraAltoWrapperTask extends BaseJob
             foreach($fieldMapping as $craftField => $vebraField){
 
                 switch($vebraField){
+                    case 'housingType(category)':
+                        $ids = [];
+                        if (empty($property['type'])){
+                            break;
+                        }
+                        $testType = $property['type'][0];
+                        $cats = VebraAltoWrapper::getInstance()->vebraAlto->searchCategoriesByTitle( (string)$property['type'][0] );
+                        foreach($cats as $cat){
+                            $ids [] = $cat->id;
+                        }
+                        //$fields[$craftField] = $ids;
+                        $fields[$craftField] = $ids;
+                        break;
                     case 'parish':
                         $this->vebraLog('Creating parish categories');
                         $ids = [];
