@@ -313,7 +313,52 @@ class VebraAltoWrapperService extends Component
         }
         return false;
     }
-    
+    public function getFloorPlan($pdfs){
+        $ids = [];
+        //\Kint::dump( $images['file'][0]['name'] );
+
+        foreach ($pdfs['file'] as $pdf) {
+            
+            //\Kint::dump( $pdf );
+            $type = $pdf['@attributes']['type'];
+            if ($type == "2"){
+                $url = $pdf['url'];
+
+                $name = $pdf['name'];
+
+                
+                if (gettype($url) == 'string') {
+
+                    //$url = strtolower( $url );
+
+
+                    if (gettype($name) == 'string') {
+                        $name = strtolower($name);
+                        
+                        if (strpos(strtolower($url), 'jpg') !== false || strpos(strtolower($url), 'png')) {
+        
+                            //$name = StringHelper::toKebabCase( $name );
+                            $name = explode('.', $name)[0];
+                            $name = StringHelper::toKebabCase($name) . '.jpg';
+        
+                            $assets = Asset::Find()
+                                ->filename($name)
+                                ->all();
+                            // d( $assets );
+                            if (count($assets) == 0) {
+                                $ids [] = (string)$this->createAssetFromUrl($name, $url);
+                            } else {
+                                $ids [] = (string)$assets[0]->id;
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        //\Kint::dump( $ids );
+        return $ids;
+    }
     public function getPdfs($pdfs)
     {
         $ids = [];
