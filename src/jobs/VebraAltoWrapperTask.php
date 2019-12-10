@@ -145,6 +145,10 @@ class VebraAltoWrapperTask extends BaseJob
                             $fields[$craftField] = [ $cat[0]->id ];
                         }
                         break;
+                    case 'floorplan':
+                        $floorplan = VebraAltoWrapper::getInstance()->vebraAlto->getFloorPlan( $property['files'] );
+                        $fields[$craftField] = $floorplan;
+                        break;
                     case 'pdf':
                             $pdfs = VebraAltoWrapper::getInstance()->vebraAlto->getPdfs( $property['files'] );
                             $fields[$craftField] = $pdfs;
