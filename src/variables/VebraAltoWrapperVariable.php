@@ -1,9 +1,12 @@
 <?php
+
 /**
  * @copyright Copyright (c) PutYourLightsOn
  */
+
 namespace jegardvebra\vebraaltowrapper\variables;
 
+use Craft;
 use jegardvebra\vebraaltowrapper\VebraAltoWrapper;
 
 use craft\elements\db\EntryQuery;
@@ -22,7 +25,7 @@ class VebraAltoWrapperVariable
     public function getLinkByField($sectionId, $fieldHandle)
     {
         $linkModel = VebraAltoWrapper::getInstance()->vebraAlto->getFieldMapping($sectionId);
-        $fieldMapping = (array)json_decode($linkModel->fieldMapping);
+        $fieldMapping = (array) json_decode($linkModel->fieldMapping);
         if (array_key_exists($fieldHandle, $fieldMapping)) {
             return $fieldMapping[$fieldHandle];
         } else {
@@ -39,7 +42,7 @@ class VebraAltoWrapperVariable
             'images' => 'images',
 
             'pdf' => 'pdf',
-            
+
             'parish' => 'parish',
 
             'measurements' => 'measurements',
@@ -105,13 +108,20 @@ class VebraAltoWrapperVariable
         $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
         $options = [];
-        foreach ($branches as $branch) {
-            if ((string)$branch->name == '') {
-                $options [ (int)$branch->branchid . '-noname' ] = $branch->branchid;
-            } else {
-                $options [ (string)$branch->name ] = $branch->name;
+
+        if (gettype($branches) !== 'NULL') {
+            foreach ($branches as $branch) {
+                if ((string) $branch->name == '') {
+                    $options[(int) $branch->branchid . '-noname'] = $branch->branchid;
+                } else {
+                    $options[(string) $branch->name] = $branch->name;
+                }
             }
+        } else {
+            echo '<script>window.location = "/admin";</script>';
+            Craft::$app->session->setFlash('error', "Cannot connect to Vebra please try again.");
         }
+
         return $options;
     }
 }
