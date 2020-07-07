@@ -146,7 +146,7 @@ class VebraAltoWrapperTask extends BaseJob
                         }
                         break;
                     case 'pdf':
-                            $pdfs = VebraAltoWrapper::getInstance()->vebraAlto->getPdfs( $property['files'] );
+                             $pdfs = VebraAltoWrapper::getInstance()->vebraAlto->getPdfs( $property['files'], $property['reference']['software'] );
                             $fields[$craftField] = $pdfs;
                         break;
                     case 'measurements':
