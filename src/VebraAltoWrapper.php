@@ -84,8 +84,6 @@ class VebraAltoWrapper extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        //require_once 'kint.phar';
-
         $this->setComponents([
             'vebraAlto' => VebraAltoWrapperService::class,
         ]);
@@ -96,22 +94,6 @@ class VebraAltoWrapper extends Plugin
             $variable = $event->sender;
             $variable->set('vebraAltoWrapper', VebraAltoWrapperVariable::class);
         });
-
-        //echo $this->vebraAlto->getToken();
-        // \Kint::dump( $this->vebraAlto->getBranch() );
-        // \Kint::dump( $this->vebraAlto->getPropertyList() );
-        
-        // $list = $this->vebraAlto->getPropertyList();
-        // $this->vebraAlto->populateProperties( $list );
-
-
-
-        // //\Kint::dump($list);
-        // $this->vebraAlto->saveNewEntry(2, array(
-        //     'title' => 'La Rue Horman',
-        //     // 'slug' => 'deff',
-        //     // 'price' => 42
-        // ));
 
         // Register our site routes
         Event::on(

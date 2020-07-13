@@ -143,13 +143,6 @@ class DefaultController extends Controller
         $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
         $branch = Craft::$app->getRequest()->getRequiredParam('branch');
-
-        // $update = VebraAltoWrapper::getInstance()->vebraAlto->populateSection( $sectionId, $branch );
-        // if( $update ){
-        //     Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Starting import'));
-        // }else{
-        //     Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Error starting import'));
-        // }
         
         $queue = Craft::$app->getQueue();
         $jobId = $queue->push(new VebraAltoWrapperTask([
