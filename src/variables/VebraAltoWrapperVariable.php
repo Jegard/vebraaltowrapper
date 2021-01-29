@@ -37,7 +37,7 @@ class VebraAltoWrapperVariable
         return array(
             '' => 'Dont import',
             //'reference,agents' => 'reference,agents',
-
+            'housingType(category)'=>  'housingType(category)',
             'LetOrSale(category)' => 'LetOrSale(category)',
             'images' => 'images',
 
