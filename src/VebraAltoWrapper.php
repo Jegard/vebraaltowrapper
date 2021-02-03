@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Vebra Alto Wrapper plugin for Craft CMS 3.x
  *
@@ -89,7 +90,7 @@ class VebraAltoWrapper extends Plugin
         ]);
 
         // Register variable
-        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function (Event $event) {
             /** @var CraftVariable $variable */
             $variable = $event->sender;
             $variable->set('vebraAltoWrapper', VebraAltoWrapperVariable::class);
@@ -150,8 +151,6 @@ class VebraAltoWrapper extends Plugin
             ),
             __METHOD__
         );
-
-
     }
 
     // Protected Methods

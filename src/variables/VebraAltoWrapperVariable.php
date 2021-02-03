@@ -9,10 +9,6 @@ namespace jegardvebra\vebraaltowrapper\variables;
 use Craft;
 use jegardvebra\vebraaltowrapper\VebraAltoWrapper;
 
-use craft\elements\db\EntryQuery;
-
-use jegardvebra\vebraaltowrapper\models\LinkModel;
-
 /**
  * Entry Count Variable
  */
@@ -105,7 +101,6 @@ class VebraAltoWrapperVariable
     }
     public function getAllBranches()
     {
-        $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
         $options = [];
 
