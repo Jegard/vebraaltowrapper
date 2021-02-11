@@ -143,12 +143,14 @@ class DefaultController extends Controller
         $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
         $branch = Craft::$app->getRequest()->getRequiredParam('branch');
+        // $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
         
         $queue = Craft::$app->getQueue();
         $jobId = $queue->push(new VebraAltoWrapperTask([
             'criteria' => [
                 'sectionId' => $sectionId,
-                'branch' => $branch
+                'branch' => $branch,
+                
             ],
         ]));
 

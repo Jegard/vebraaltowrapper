@@ -234,26 +234,28 @@ class VebraAltoWrapperTask extends BaseJob
             }
         }
         file_put_contents(__DIR__ . '/props.json', json_encode($allProps));
-        // d($allProps[0]['paragraphs']['paragraph']  );
-        $allEntries = Entry::find()
-            ->sectionId($sectionId)
-            //->title( $title )
-            ->limit(null)
-            ->status(null)
-            ->all();
-        foreach ($allEntries as $entry) {
-            $isOnVebra = false;
-            foreach ($allProps as $property) {
-                if ((string)$entry->reference == (string)$property['reference']['software']) {
-                    $isOnVebra = true;
+
+        if (VebraAltoWrapper::$plugin->getSettings()->shouldAutoDisable !== '1') {
+            $allEntries = Entry::find()
+                ->sectionId($sectionId)
+                //->title( $title )
+                ->limit(null)
+                ->status(null)
+                ->all();
+            foreach ($allEntries as $entry) {
+                $isOnVebra = false;
+                foreach ($allProps as $property) {
+                    if ((string)$entry->reference == (string)$property['reference']['software']) {
+                        $isOnVebra = true;
+                    }
                 }
-            }
-            if (!$isOnVebra) {
-                $entry->enabled = false;
-                Craft::$app->elements->saveElement($entry);
-            } else {
-                $entry->enabled = true;
-                Craft::$app->elements->saveElement($entry);
+                if (!$isOnVebra) {
+                    $entry->enabled = false;
+                    Craft::$app->elements->saveElement($entry);
+                } else {
+                    $entry->enabled = true;
+                    Craft::$app->elements->saveElement($entry);
+                }
             }
         }
     }

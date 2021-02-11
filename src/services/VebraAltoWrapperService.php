@@ -296,17 +296,11 @@ class VebraAltoWrapperService extends Component
         $ids = [];
 
         foreach ($pdfs['file'] as $pdf) {
-
-
             $url = $pdf['url'];
-
             $name = $pdf['name'];
 
-
             if (gettype($url) == 'string') {
-
                 if (strpos($url, 'pdf') !== false || strpos($url, 'PDF') !== false) {
-
                     $name = explode('.', $name)[0];
                     $name = StringHelper::toKebabCase($name . '-' . $ref) . '.pdf';
 

@@ -42,6 +42,7 @@ class Settings extends Model
     public $dataFeedID = '';
     public $vebraUsername = '';
     public $vebraPassword = '';
+    public $shouldAutoDisable = '';
     //public $sectionId = '';
 
     // Public Methods
@@ -60,7 +61,8 @@ class Settings extends Model
     public function rules()
     {
         return [
-            [['dataFeedID' , 'vebraUsername', 'vebraPassword'], 'required']
+            [['dataFeedID' , 'vebraUsername', 'vebraPassword'], 'required'],
+            ['shouldAutoDisable', 'boolean']
         ];
     }
 }
