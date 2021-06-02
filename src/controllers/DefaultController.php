@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Vebra Alto Wrapper plugin for Craft CMS 3.x
  *
@@ -48,7 +49,7 @@ class DefaultController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'do-something', 'update-branch'];
+    protected $allowAnonymous = ['index', 'update-branch', 'connect'];
 
     // Public Methods
     // =========================================================================
@@ -66,96 +67,74 @@ class DefaultController extends Controller
         return $result;
     }
 
-    /**
-     * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/vebra-alto-wrapper/default/do-something
-     *
-     * @return mixed
-     */
+    public function actionConnect()
+    {
+        return 'test';
+    }
+
     public function actionSetSection()
     {
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
         $branch = Craft::$app->getRequest()->getRequiredParam('branch');
 
-        if( VebraAltoWrapper::getInstance()->vebraAlto->updateLinkModel( $sectionId, $branch ) ){
+        if (VebraAltoWrapper::getInstance()->vebraAlto->updateLinkModel($sectionId, $branch)) {
             Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Saved link settings'));
-        }else{
+        } else {
             Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Error saving settings'));
         }
 
         return $this->redirect('admin/vebra-alto-wrapper');
     }
+
     public function actionSetMap()
     {
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
         $fieldMapping = Craft::$app->getRequest()->getRequiredParam('fieldMapping');
 
-        // \Kint::dump( $fieldMapping );
-        if( VebraAltoWrapper::getInstance()->vebraAlto->updateFieldMapping( $sectionId, $fieldMapping ) ){
+        if (VebraAltoWrapper::getInstance()->vebraAlto->updateFieldMapping($sectionId, $fieldMapping)) {
             Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Saved mapping settings'));
-        }else{
+        } else {
             Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Error saving settings'));
         }
 
         return $this->redirect('admin/vebra-alto-wrapper');
-
     }
     public function actionDeleteLink()
     {
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
-        
-        if( VebraAltoWrapper::getInstance()->vebraAlto->deleteLinkModel( $sectionId ) ){
+
+        if (VebraAltoWrapper::getInstance()->vebraAlto->deleteLinkModel($sectionId)) {
             Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Link deleted'));
-        }else{
+        } else {
             Craft::$app->getSession()->setNotice(Craft::t('vebra-alto-wrapper', 'Error deleting link'));
         }
         return $this->redirect('admin/vebra-alto-wrapper');
     }
     public function actionUpdateAll()
     {
-        // $list = $this->vebraAlto->getPropertyList();
-        // $this->vebraAlto->populateProperties( $list );
         $list = VebraAltoWrapper::getInstance()->vebraAlto->getPropertyList();
-        VebraAltoWrapper::getInstance()->vebraAlto->populateProperties( $list );
+        VebraAltoWrapper::getInstance()->vebraAlto->populateProperties($list);
 
         return 'Updated all properties';
     }
-    public function actionDoSomething()
-    {
-        //testing jobs
-        // Craft::$app->getQueue()->run();
-        $queue = Craft::$app->getQueue();
-        // $jobId = $queue->push(
-        //     new VebraAltoWrapperTask()
-        // );
 
-        $jobId = $queue->push(new VebraAltoWrapperTask([
-            'criteria' => [
-                'sectionId' => 34,
-                'branchName' => 4234
-            ],
-        ]));
-
-        return $this->redirect('admin/vebra-alto-wrapper');
-    }
     public function actionUpdateBranch()
     {
         $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
         $branch = Craft::$app->getRequest()->getRequiredParam('branch');
         // $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
-        
+
         $queue = Craft::$app->getQueue();
         $jobId = $queue->push(new VebraAltoWrapperTask([
             'criteria' => [
                 'sectionId' => $sectionId,
                 'branch' => $branch,
-                
+
             ],
         ]));
 
         return $this->redirect('admin/vebra-alto-wrapper');
         //\Kint::dump( $update );
     }
-
 }

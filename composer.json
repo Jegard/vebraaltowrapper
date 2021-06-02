@@ -2,7 +2,7 @@
     "name": "jegardvebra/vebra-alto-wrapper",
     "description": "Integration with the estate agency software vebraalto.com",
     "type": "craft-plugin",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "keywords": [
         "craft",
         "cms",
