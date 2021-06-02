@@ -1,1 +1,0 @@
-Token NOT older than 3600 seconds old. The tokens age is 3043 seconds old

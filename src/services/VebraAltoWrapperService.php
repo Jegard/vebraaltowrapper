@@ -227,10 +227,14 @@ class VebraAltoWrapperService extends Component
         $info = curl_getinfo($ch);
         curl_close($ch);
 
-        // file_put_contents(__DIR__ . '/info.json', json_encode($info));
+        if($info["http_code"] == 200) {
+            $response = (array)simplexml_load_string($response);
+        }else{
+            $response = [];
+        }
 
         return array(
-            'response' => (array)simplexml_load_string($response) ?? [],
+            'response' => $response,
             'info' => $info
         );
     }
