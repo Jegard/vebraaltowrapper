@@ -233,7 +233,7 @@ class VebraAltoWrapperTask extends BaseJob
                 VebraAltoWrapper::getInstance()->vebraAlto->updateEntry($entry[0], $fields);
             }
         }
-        file_put_contents(__DIR__ . '/props.json', json_encode($allProps));
+        // file_put_contents(__DIR__ . '/props.json', json_encode($allProps));
 
         if (VebraAltoWrapper::$plugin->getSettings()->shouldAutoDisable !== '1') {
             $allEntries = Entry::find()
