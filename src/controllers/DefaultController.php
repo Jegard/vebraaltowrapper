@@ -69,7 +69,8 @@ class DefaultController extends Controller
 
     public function actionConnect()
     {
-        return 'test';
+        VebraAltoWrapper::getInstance()->vebraAlto->getToken();
+        return 'true';
     }
 
     public function actionSetSection()
@@ -120,21 +121,19 @@ class DefaultController extends Controller
 
     public function actionUpdateBranch()
     {
-        $token = VebraAltoWrapper::getInstance()->vebraAlto->getToken();
+        VebraAltoWrapper::getInstance()->vebraAlto->getToken();
         $sectionId = Craft::$app->getRequest()->getRequiredParam('sectionId');
         $branch = Craft::$app->getRequest()->getRequiredParam('branch');
-        // $branches = VebraAltoWrapper::getInstance()->vebraAlto->getBranch();
 
+        VebraAltoWrapper::getInstance()->vebraAlto->vebraLog('Starting new branch update');
         $queue = Craft::$app->getQueue();
-        $jobId = $queue->push(new VebraAltoWrapperTask([
+        $queue->push(new VebraAltoWrapperTask([
             'criteria' => [
                 'sectionId' => $sectionId,
                 'branch' => $branch,
-
             ],
         ]));
 
         return $this->redirect('admin/vebra-alto-wrapper');
-        //\Kint::dump( $update );
     }
 }

@@ -226,10 +226,10 @@ class VebraAltoWrapperTask extends BaseJob
                 ->all();
 
             if (empty($entry)) {
-                $this->vebraLog('Attempting to save entry ' . json_encode($fields));
+                // $this->vebraLog('Attempting to save entry ' . json_encode($fields));
                 VebraAltoWrapper::getInstance()->vebraAlto->saveNewEntry($sectionId, $fields);
             } else {
-                $this->vebraLog('Attempting to update entry ' . json_encode($fields));
+                // $this->vebraLog('Attempting to update entry ' . json_encode($fields));
                 VebraAltoWrapper::getInstance()->vebraAlto->updateEntry($entry[0], $fields);
             }
         }
