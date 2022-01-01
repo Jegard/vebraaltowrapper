@@ -257,6 +257,25 @@ class VebraAltoWrapperTask extends BaseJob
                     Craft::$app->elements->saveElement($entry);
                 }
             }
+        } else {
+            $allEntries = Entry::find()
+                ->sectionId($sectionId)
+                //->title( $title )
+                ->limit(null)
+                ->status(null)
+                ->all();
+            foreach ($allEntries as $entry) {
+                $isOnVebra = false;
+                foreach ($allProps as $property) {
+                    if ((string)$entry->reference == (string)$property['reference']['software']) {
+                        $isOnVebra = true;
+                    }
+                }
+                if (!$isOnVebra) {
+                    $entry->webStatus = '2';
+                    Craft::$app->elements->saveElement($entry);
+                }
+            }
         }
     }
 
