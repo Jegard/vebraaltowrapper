@@ -271,7 +271,8 @@ class VebraAltoWrapperTask extends BaseJob
                         $isOnVebra = true;
                     }
                 }
-                if (!$isOnVebra) {
+                $this->vebraLog('Web status ' . $title . ' ' . $entry->webStatus . ' type: ' . gettype($entry->webStatus));
+                if (!$isOnVebra && $entry->webStatus == '3') {
                     $entry->webStatus = '2';
                     Craft::$app->elements->saveElement($entry);
                 }
