@@ -1,4 +1,4 @@
-# Vebra Alto Wrapper plugin for Craft CMS 3.x
+# Vebra Alto Wrapper plugin for Craft CMS 3.x - DEPRECATED
 
 Integration with the estate agency software vebraalto.com
 
